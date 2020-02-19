@@ -1,0 +1,201 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment_name": {
+      "type": "String"
+    },
+    "server_name": {
+      "type": "String"
+    },      
+    "servers_arx_admin_login": {
+      "type": "String"
+    },
+    "servers_arx_admin_password": {
+      "type": "String"
+    }
+    
+  },
+
+
+  "variables": {
+    "location": "uksouth",    
+    "tags": {
+      "Business": "ARMTest",
+      "BusinessUnit": "First Databank Europe Limited",
+      "Environment": "[parameters('environment_name')]",
+      "Product": "ARMTest",
+      "SupportTeam": "ARMtest@fdbhealth.com"
+
+    },
+
+
+    //run this to get the avaliable SKUs: az sql db list-editions -l uksouth -o table
+
+    "environmentSettings": {
+      "local": {
+        "resourcePrefix": "loc_",
+        "databaseCapacityInBbytes": 2147483648,
+        "database_sku": {
+          "name": "S0",
+          "tier": "standard"
+                    
+        }
+      },
+      "development": {
+        "resourcePrefix": "dev_",
+        "databaseCapacityInBbytes": 2147483648,
+        "database_sku": {
+           "name": "S1",
+          "tier": "standard"
+
+        }
+      },
+      "acceptance": {
+        "resourcePrefix": "acc_",
+        "databaseCapacityInBbytes": 2147483648,
+        "database_sku": {
+                     "name": "S2",
+          "tier": "standard"
+
+        }
+      },
+      "production": {
+        "resoursePrefix": "prd_",
+        "databaseCapacityInBbytes": 2147483648,
+        "database_sku": {
+          "name": "s3",
+          "tier": "standard"
+
+        }
+      }
+
+    },
+    "firstDatabaseName":"DB1",
+    "secondDatabaseName":"DB2",
+    "thirdDatabaseName":"DB3"
+  },
+
+
+  "resources": [
+
+    {
+      "comments": "Azure SQL Database (Server)",
+      "type": "Microsoft.Sql/servers",
+      "kind": "v12.0",
+      "name": "[parameters('server_name')]",
+      "apiVersion": "2015-05-01-preview",
+      "location": "[variables('location')]",
+     "tags": {
+        "Business": "[variables('tags').business]",
+        "BusinessUnit": "[variables('tags').BusinessUnit]",
+        "Environment": "[parameters('environment_name')]",
+        "Product": "[variables('tags').Product]",
+        "SupportTeam": "[variables('tags').SupportTeam]"
+      },
+      "scale": null,
+      "properties": {
+        "administratorLogin": "[parameters('servers_arx_admin_login')]",
+        "administratorLoginPassword": "[parameters('servers_arx_admin_password')]",
+        "version": "12.0"
+      },
+      "dependsOn": [
+      ]
+    },
+
+
+    {
+      "comments": "Azure SQL Database (local)",
+      "type": "Microsoft.Sql/servers/databases",
+      "sku": {
+        "name": "[variables('environmentSettings')[parameters('environment_name')].database_sku.name]",
+        "tier": "[variables('environmentSettings')[parameters('environment_name')].database_sku.tier]"
+
+      },
+      "kind": "v12.0,user",
+      "name": "[concat(parameters('server_name'), '/', variables('environmentSettings')[parameters('environment_name')].resourcePrefix, variables('firstDatabaseName'))]",
+      "apiVersion": "2017-03-01-preview",
+      "location": "uksouth",
+      "tags": {
+        "Business": "[variables('tags').business]",
+        "BusinessUnit": "[variables('tags').BusinessUnit]",
+        "Environment": "[parameters('environment_name')]",
+        "Product": "[variables('tags').Product]",
+        "SupportTeam": "[variables('tags').SupportTeam]"
+      },
+      "scale": null,
+      "properties": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "maxSizeBytes": "[variables('environmentSettings')[parameters('environment_name')].databaseCapacityInBbytes]",
+        "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+        "zoneRedundant": false
+      },
+      "dependsOn": [
+        "[parameters('server_name')]"
+      ]
+    },
+    {
+      "comments": "Azure SQL Database (Dev)",
+      "type": "Microsoft.Sql/servers/databases",
+      "sku": {
+        "name": "[variables('environmentSettings')[parameters('environment_name')].database_sku.name]",
+        "tier": "[variables('environmentSettings')[parameters('environment_name')].database_sku.tier]"
+
+      },
+      "kind": "v12.0,user",
+      "name": "[concat(parameters('server_name'), '/', variables('environmentSettings')[parameters('environment_name')].resourcePrefix, variables('secondDatabaseName'))]",
+      "apiVersion": "2017-03-01-preview",
+      "location": "uksouth",
+      "tags": {
+        "Business": "[variables('tags').business]",
+        "BusinessUnit": "[variables('tags').BusinessUnit]",
+        "Environment": "[parameters('environment_name')]",
+        "Product": "[variables('tags').Product]",
+        "SupportTeam": "[variables('tags').SupportTeam]"
+      },
+      "scale": null,
+      "properties": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "maxSizeBytes": "[variables('environmentSettings')[parameters('environment_name')].databaseCapacityInBbytes]",
+        "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+        "zoneRedundant": false
+      },
+      "dependsOn": [
+        "[parameters('server_name')]"
+      ]
+    },
+
+
+
+    {
+      "comments": "Azure SQL Database (Production)",
+      "type": "Microsoft.Sql/servers/databases",
+      "sku": {
+        "name": "[variables('environmentSettings')[parameters('environment_name')].database_sku.name]",
+        "tier": "[variables('environmentSettings')[parameters('environment_name')].database_sku.tier]"
+      },
+      "kind": "v12.0,user",
+      "name": "[concat(parameters('server_name'), '/', variables('environmentSettings')[parameters('environment_name')].resourcePrefix, variables('thirdDatabaseName'))]",
+      "apiVersion": "2017-03-01-preview",
+      "location": "uksouth",
+      "tags": {
+        "Business": "[variables('tags').business]",
+        "BusinessUnit": "[variables('tags').BusinessUnit]",
+        "Environment": "[parameters('environment_name')]",
+        "Product": "[variables('tags').Product]",
+        "SupportTeam": "[variables('tags').SupportTeam]"
+      },
+      "scale": null,
+      "properties": {
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "maxSizeBytes": "[variables('environmentSettings')[parameters('environment_name')].databaseCapacityInBbytes]",
+        "catalogCollation": "SQL_Latin1_General_CP1_CI_AS",
+        "zoneRedundant": false
+      },
+      "dependsOn": [
+        "[parameters('server_name')]"
+      ]
+    }
+
+  ]
+}

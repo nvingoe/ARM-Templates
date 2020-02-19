@@ -1,0 +1,84 @@
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment_name": {
+            "type": "String"
+        }
+    },
+    "variables": {
+        "location": "uksouth",
+        "tags": {
+            "Business": "ARMTest",
+            "BusinessUnit": "First Databank Europe Limited",
+            "Environment": "[parameters('environment_name')]",
+            "Product": "ARMTest",
+            "SupportTeam": "ARMtest@fdbhealth.com"
+
+        }
+    },
+
+    "resources": [
+
+        {
+            "name": "[variables('appServicePlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "kind": "AppServicePlan",
+            "location": "[variables('location')]",
+            "tags": {
+                "Business": "[variables('tags').business]",
+                "BusinessUnit": "[variables('tags').BusinessUnit]",
+                "Environment": "[parameters('environment_name')]",
+                "Product": "[variables('tags').Product]",
+                "SupportTeam": "[variables('tags').SupportTeam]"
+            },
+            "properties": {
+                "workerTierName": "string",
+                "hostingEnvironmentProfile": {
+                    "id": "string"
+                },
+                "perSiteScaling": "boolean",
+                "maximumElasticWorkerCount": "integer",
+                "isSpot": "boolean",
+                "spotExpirationTime": "string",
+                "freeOfferExpirationTime": "string",
+                "reserved": "boolean",
+                "isXenon": "boolean",
+                "hyperV": "boolean",
+                "targetWorkerCount": "integer",
+                "targetWorkerSizeId": "integer"
+            },
+            "sku": {
+                "name": "string",
+                "tier": "string",
+                "size": "string",
+                "family": "string",
+                "capacity": "integer",
+                "skuCapacity": {
+                    "minimum": "integer",
+                    "maximum": "integer",
+                    "default": "integer",
+                    "scaleType": "string"
+                },
+                "locations": [
+                    "string"
+                ],
+                "capabilities": [
+                    {
+                        "name": "string",
+                        "value": "string",
+                        "reason": "string"
+                    }
+                ]
+            }
+        }
+
+
+    ],
+    "outputs": {
+    },
+    "functions": [
+    ]
+} }

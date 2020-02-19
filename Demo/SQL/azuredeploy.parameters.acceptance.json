@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment_name": {
+      "value": "acceptance"
+    },
+    "server_name": {
+      "value": "ARMTestServer"
+    },    
+    "servers_arx_admin_login": {
+      "value": "armtest_user"
+    },
+    "servers_arx_admin_password": {
+      "value": "amtest-_!#Pword!2"
+    }
+  }
+}
