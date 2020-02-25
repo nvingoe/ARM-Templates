@@ -1,0 +1,90 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment_name": {
+            "type": "String"
+        }
+    },
+
+    "variables": {
+        "location": "uksouth",
+        "tags": {
+            "Business": "ARMTest",
+            "BusinessUnit": "First Databank Europe Limited",
+            "Environment": "[parameters('environment_name')]",
+            "Product": "ARMTest",
+            "SupportTeam": "ARMtest@fdbhealth.com"
+        },
+
+        "AppServicePlanName": "ARMTestApp",
+
+        "environmentSettings": {
+            "local": {
+                "resourcePrefix": "loc_",
+                "AppServicePlan_sku": {
+                    "name": "F1",
+                    "tier": "Free"
+
+                }
+            },
+            "development": {
+                "resourcePrefix": "dev_",
+                "AppServicePlan_sku": {
+                    "name": "B1",
+                    "tier": "Basic"
+
+                }
+            },
+            "acceptance": {
+                "resourcePrefix": "acc_",
+                "AppServicePlan_sku": {
+                    "name": "S1",
+                    "tier": "Standard"
+
+                }
+            },
+            "production": {
+                "resoursePrefix": "prd_",
+                "AppServicePlan_sku": {
+                    "name": "S1",
+                    "tier": "Standard"
+
+                }
+            }
+
+        }
+    },
+
+
+    "resources": [
+        {
+
+            "name": "[concat(variables('environmentSettings')[parameters('environment_name')].resourcePrefix, variables('AppServicePlanName'))]",
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "location": "[variables('location')]",
+
+
+            "tags": {
+                "Business": "[variables('tags').business]",
+                "BusinessUnit": "[variables('tags').BusinessUnit]",
+                "Environment": "[parameters('environment_name')]",
+                "Product": "[variables('tags').Product]",
+                "SupportTeam": "[variables('tags').SupportTeam]"
+            },
+           
+            "sku": {
+                "name": "[variables('environmentSettings')[parameters('environment_name')].AppServicePlan_sku.name]",
+                "tier": "[variables('environmentSettings')[parameters('environment_name')].AppServicePlan_sku.tier]"
+
+
+            }
+        }
+
+    ],
+    "outputs": {
+    },
+    "functions": [
+    ]
+}
