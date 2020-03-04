@@ -10,18 +10,19 @@
     "variables": {
         "location": "uksouth",
         "tags": {
-            "Business": "ARMTest",
+            "Business": "HBM",
             "BusinessUnit": "First Databank Europe Limited",
             "Environment": "[parameters('environment_name')]",
             "Product": "ARMTest",
             "SupportTeam": "ARMtest@fdbhealth.com"
         },
 
-        "AppServicePlanName": "ARMTestApp",
+        "appServicePlanName": "brownBagAppServicePlan",
+        "appName": "brownBagAppService",
 
         "environmentSettings": {
             "local": {
-                "resourcePrefix": "loc_",
+                "resourcePrefix": "local",
                 "AppServicePlan_sku": {
                     "name": "F1",
                     "tier": "Free"
@@ -29,7 +30,7 @@
                 }
             },
             "development": {
-                "resourcePrefix": "dev_",
+                "resourcePrefix": "dev",
                 "AppServicePlan_sku": {
                     "name": "B1",
                     "tier": "Basic"
@@ -37,7 +38,7 @@
                 }
             },
             "acceptance": {
-                "resourcePrefix": "acc_",
+                "resourcePrefix": "accept",
                 "AppServicePlan_sku": {
                     "name": "S1",
                     "tier": "Standard"
@@ -45,7 +46,7 @@
                 }
             },
             "production": {
-                "resoursePrefix": "prd_",
+                "resoursePrefix": "prd",
                 "AppServicePlan_sku": {
                     "name": "S1",
                     "tier": "Standard"
@@ -64,26 +65,42 @@
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2018-02-01",
             "location": "[variables('location')]",
-
-
             "tags": {
                 "Business": "[variables('tags').business]",
                 "BusinessUnit": "[variables('tags').BusinessUnit]",
                 "Environment": "[parameters('environment_name')]",
                 "Product": "[variables('tags').Product]",
                 "SupportTeam": "[variables('tags').SupportTeam]"
-            },
-           
+            },           
             "sku": {
                 "name": "[variables('environmentSettings')[parameters('environment_name')].AppServicePlan_sku.name]",
                 "tier": "[variables('environmentSettings')[parameters('environment_name')].AppServicePlan_sku.tier]"
 
 
             }
-        }
+        },
+        {
+      "apiVersion": "2018-02-01",
+      "type": "Microsoft.Web/sites",
+      "name":  "[concat(variables('environmentSettings')[parameters('environment_name')].resourcePrefix, variables('appName'))]",
+      "location": "[variables('location')]",
+      "tags": {
+            "Business": "HBM",
+            "BusinessUnit": "First Databank Europe Limited",
+            "Environment": "[parameters('environment_name')]",
+            "Product": "ARMTest",
+            "SupportTeam": "ARMtest@fdbhealth.com"
+        },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms',concat(variables('environmentSettings')[parameters('environment_name')].resourcePrefix, variables('AppServicePlanName')))]"
+      },
+      "dependsOn": [
+        "[concat(variables('environmentSettings')[parameters('environment_name')].resourcePrefix, variables('AppServicePlanName'))]"
+      ]
+    }
 
     ],
-    "outputs": {
+    "outputs": { 
     },
     "functions": [
     ]
