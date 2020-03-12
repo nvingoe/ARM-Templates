@@ -1,0 +1,127 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment_name": {
+            "type": "String"
+        }
+    },
+
+    "variables": {
+        "location": "uksouth",
+        "tags": {
+            "Business": "HBM",
+            "BusinessUnit": "First Databank Europe Limited",
+            "Environment": "[parameters('environment_name')]",
+            "Product": "ARMTest",
+            "SupportTeam": "arm.test@fdbhealth.com"
+        },
+
+        "storageAccountName": "brownbagStorageAccount",
+        "container1Name": "brownbagContainer1",
+        "container2Name": "brownbagContainer2",
+
+
+        "environmentSettings": {
+
+            "local": {
+                "resourcePrefix": "local",
+                "storageSKU": {
+                    "name": "Standard_LRS",
+                    "tier": "Standard"
+
+                }
+            },
+            "development": {
+                "resourcePrefix": "dev",
+                "storageSKU": {
+                    "name": "Standard_LRS",
+                    "tier": "Standard"
+
+                }
+            },
+            "acceptance": {
+                "resourcePrefix": "accept",
+                "storageSKU": {
+                    "name": "Standard_LRS",
+                    "tier": "Standard"
+
+                }
+            },
+            "production": {
+                "resoursePrefix": "prd",
+                "storageSKU": {
+                    "name": "Premium_LRS",
+                    "tier": "Premium"
+
+                }
+            }
+
+        }
+    },
+
+
+    "resources": [
+
+
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "sku": {
+                "name": "[variables('environmentSettings')[parameters('environment_name')].storageSKU.name]"
+            },
+            "kind": "BlobStorage",
+            "location": "[variables('location')]",
+            "tags": {
+                "Business": "[variables('tags').business]",
+                "BusinessUnit": "[variables('tags').BusinessUnit]",
+                "Environment": "[parameters('environment_name')]",
+                "Product": "[variables('tags').Product]",
+                "SupportTeam": "[variables('tags').SupportTeam]"
+            },
+            "properties": {
+                "supportsHttpsTrafficOnly": true,
+
+                "encryption": {
+                    "services": {
+                        "blob": {
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[concat('default/', variables('container1Name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+
+            "properties": {
+                "publicAccess": "Container"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2018-03-01-preview",
+            "name": "[concat('default/', variables('container2Name'))]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        }
+
+
+    ],
+    "outputs": {
+    },
+    "functions": [
+    ]
+}
