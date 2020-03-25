@@ -17,9 +17,9 @@
             "SupportTeam": "arm.test@fdbhealth.com"
         },
 
-        "storageAccountName": "brownbagStorageAccount",
-        "container1Name": "brownbagContainer1",
-        "container2Name": "brownbagContainer2",
+        "storageAccountName": "storage210972",
+        "container1Name": "storagecontainer1",
+        "container2Name": "storagecontainer2",
 
 
         "environmentSettings": {
@@ -67,11 +67,11 @@
         {
             "name": "[variables('storageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
-            "apiVersion": "2019-06-01",
+            "apiVersion": "2018-02-01",
             "sku": {
                 "name": "[variables('environmentSettings')[parameters('environment_name')].storageSKU.name]"
             },
-            "kind": "BlobStorage",
+            "kind": "StorageV2",
             "location": "[variables('location')]",
             "tags": {
                 "Business": "[variables('tags').business]",
@@ -92,31 +92,37 @@
                     "keySource": "Microsoft.Storage"
                 },
                 "accessTier": "Hot"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2018-03-01-preview",
-            "name": "[concat('default/', variables('container1Name'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
-            ],
+            },
+            "resources": [
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "name": "[concat('default/', variables('container1Name'))]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                    ],
 
-            "properties": {
-                "publicAccess": "Container"
-            }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-            "apiVersion": "2018-03-01-preview",
-            "name": "[concat('default/', variables('container2Name'))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
-            ],
-            "properties": {
-                "publicAccess": "None"
-            }
+                    "properties": {
+                        "publicAccess": "Container"
+                    }
+                },
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-03-01-preview",
+                    "name": "[concat('default/', variables('container2Name'))]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]"
+                    ],
+
+                    "properties": {
+                        "publicAccess": "Container"
+                    }
+                }
+
+            ]
+
         }
+
 
 
     ],

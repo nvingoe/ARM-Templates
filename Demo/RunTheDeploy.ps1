@@ -16,6 +16,7 @@ Set-AzContext -Tenant $tenantName  -SubscriptionId $subscriptionName
 if ((az group exists --subscription $subscriptionName  --name $resourceGroupName) -eq "true") {
   
     Remove-AzResourceGroup -Name $resourceGroupName -force
+    new-AzResourceGroup -Name $resourceGroupName -Location $resourceGroupLocation
 }
 else {
 

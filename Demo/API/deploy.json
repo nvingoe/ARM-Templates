@@ -17,8 +17,8 @@
             "SupportTeam": "ARMtest@fdbhealth.com"
         },
 
-        "appServicePlanName": "brownBagAppServicePlan",
-        "appName": "brownBagAppService",
+        "appServicePlanName": "demoAppServicePlan",
+        "appName": "demoAppService",
 
         "environmentSettings": {
             "local": {
